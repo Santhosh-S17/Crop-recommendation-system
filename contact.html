@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Your AgriTech Company</title>
+
+    <!-- 
+        ====================================
+        EMBEDDED CSS STYLES FOR CONTACT PAGE
+        ====================================
+    -->
+    <style>
+        /* 1. BASE STYLES */
+        :root {
+            --color-primary-green: #28a745;
+            --color-secondary-light: #e9f5e9;
+            --color-text-dark: #333;
+            --color-text-light: #fff;
+            --color-background-white: #fff;
+            --font-heading: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--color-text-dark);
+            line-height: 1.6;
+            background-color: #f4f4f4;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-family: var(--font-heading);
+            color: var(--color-primary-green);
+            text-align: center;
+            padding: 40px 0 20px;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-family: var(--font-heading);
+            color: var(--color-text-dark);
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            border-left: 5px solid var(--color-primary-green);
+            padding-left: 10px;
+        }
+
+        /* 2. HEADER & NAVIGATION */
+        header {
+            background-color: var(--color-primary-green);
+            color: var(--color-text-light);
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        nav a {
+            color: var(--color-text-light);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0 15px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #ffd700;
+        }
+
+        /* 3. SECTION STYLES */
+        section {
+            background-color: var(--color-background-white);
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* 4. FORM STYLES */
+        #contact-form-section h2 {
+            border-left: none; /* Make form section clean */
+            text-align: center;
+        }
+
+        form label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        form input[type="text"],
+        form input[type="email"],
+        form select,
+        form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: inherit;
+        }
+
+        form input:focus,
+        form select:focus,
+        form textarea:focus {
+            border-color: var(--color-primary-green);
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+            outline: none;
+        }
+
+        form textarea {
+            resize: vertical;
+        }
+
+        form button[type="submit"] {
+            display: block;
+            width: 100%;
+            background-color: var(--color-primary-green);
+            color: var(--color-text-light);
+            border: none;
+            padding: 12px 20px;
+            margin-top: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #1e7e34;
+            transform: translateY(-1px);
+        }
+        
+        /* NEW: Success Message Styles */
+        #successMessage {
+            text-align: center;
+            padding: 60px 20px;
+            border: 2px solid var(--color-primary-green);
+            background-color: var(--color-secondary-light);
+            color: var(--color-primary-green);
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.2);
+        }
+        #successMessage h2 {
+            margin-bottom: 15px;
+            color: var(--color-primary-green);
+            border-left: none;
+            padding-left: 0;
+            font-size: 1.8em;
+        }
+        #successMessage p {
+            margin-top: 15px;
+            font-size: 0.8em;
+            font-weight: normal;
+            color: #555;
+        }
+
+        /* 5. DIRECT CONTACT & LOCATION STYLES (Cleaned up) */
+        #direct-contact h3 {
+            border-left: 3px solid #ccc;
+            padding-left: 8px;
+            color: #555;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        #direct-contact p {
+            margin: 5px 0;
+        }
+
+        #direct-contact a {
+            color: var(--color-primary-green);
+            text-decoration: none;
+        }
+
+        #direct-contact a:hover {
+            text-decoration: underline;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background-color: #ddd;
+            margin: 30px 0;
+        }
+
+        /* 6. FOOTER */
+        footer {
+            background-color: var(--color-text-dark);
+            color: var(--color-text-light);
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            font-size: 0.9em;
+        }
+
+        footer a {
+            color: #ffd700;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/about">About Us</a>
+            <a href="/contact">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Let’s Connect & Grow Together 🤝</h1>
+
+        <section id="contact-form-section">
+            <h2>Send Us a Message</h2>
+            <p style="text-align: center; max-width: 600px; margin: 0 auto 25px;">Use the form below for general inquiries, partnership proposals, or technical support. We aim to respond within **1 business day**.</p>
+
+            <form id="contactForm" action="[YOUR_FORM_SUBMISSION_ENDPOINT]" method="POST"> 
+                
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" name="user_name" required>
+
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="user_email" required>
+
+                <label for="type">I am a:</label>
+                <select id="type" name="user_type">
+                    <option value="farmer">Farmer</option>
+                    <option value="partner">Partner/Media</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <label for="subject">Subject:</label>
+                <input type="text" id="subject" name="subject" required>
+
+                <label for="message">Message:</label>
+                <textarea id="message" name="user_message" rows="6" required></textarea>
+
+                <button type="submit">Send Message</button>
+            </form>
+            
+            <!-- Message will appear here upon submission -->
+            <div id="successMessage" style="display: none;">
+                <!-- Content is populated by JavaScript -->
+            </div>
+        </section>
+
+        <hr>
+
+        <section id="direct-contact">
+            <h2>Direct Contact Channels</h2>
+            
+            <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+                <div>
+                    <h3>Sales & Inquiries</h3>
+                    <p>For new customer demos and partnership questions:</p>
+                    <p>📧 Email: <a href="mailto:sales@agritech.com">sales@agritech.com</a></p>
+                    <p>📞 Phone: <a href="tel:+918754947457">+91 8754 947457</a></p>
+                </div>
+
+                <div>
+                    <h3>Technical Support</h3>
+                    <p>For existing users needing help with the platform:</p>
+                    <p>📧 Email: <a href="mailto:support@agritech.com">support@agritech.com</a></p>
+                    <p>🛠️ Self-Service: <a href="faq.html">Check our FAQ/Help Center</a></p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Your AgriTech Company | <a href="#">LinkedIn</a> | <a href="#">Twitter</a></p>
+    </footer>
+
+    <!-- 
+        ====================================
+        JAVASCRIPT FOR FORM HANDLING
+        ====================================
+    -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('contactForm');
+            const successMessage = document.getElementById('successMessage');
+
+            if (!form || !successMessage) {
+                console.error("Form or success message element not found.");
+                return;
+            }
+
+            form.addEventListener('submit', (event) => {
+                // 1. Stop the browser from attempting a server submission/page navigation
+                event.preventDefault();
+
+                // 2. Simulate success after validating (Validation is handled by 'required' attributes)
+                
+                // 3. Hide the form
+                form.style.display = 'none';
+
+                // 4. Populate and show the success message
+                successMessage.innerHTML = `
+                    <h2 style="color: var(--color-primary-green);">✅ Message Sent Successfully!</h2>
+                    <p>Thank you for reaching out. We have received your inquiry and will respond within 1 business day.</p>
+                    <p style="margin-top: 5px;">You can still use the <a href="#direct-contact" style="color: #1e7e34; text-decoration: underline;">Direct Contact Channels</a> below if your query is urgent.</p>
+                `;
+                successMessage.style.display = 'block';
+
+                // 5. Scroll up to make the message visible
+                successMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+
+</body>
+</html>

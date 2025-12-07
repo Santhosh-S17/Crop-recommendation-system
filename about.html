@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | AgriTech</title>
+    
+    <style>
+        /* 1. BASE STYLES & TYPOGRAPHY */
+        :root {
+            --color-primary-green: #28a745;
+            --color-secondary-light: #e9f5e9;
+            --color-text-dark: #333;
+            --color-text-light: #fff;
+            --color-background-white: #fff;
+            --font-heading: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--color-text-dark);
+            line-height: 1.6;
+            background-color: #f4f4f4;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-family: var(--font-heading);
+            color: var(--color-primary-green);
+            text-align: center;
+            padding: 40px 0 20px;
+            font-size: 2.5em;
+            border-bottom: 2px solid var(--color-secondary-light);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-family: var(--font-heading);
+            color: var(--color-text-dark);
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            border-left: 5px solid var(--color-primary-green);
+            padding-left: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        strong {
+            font-weight: 700;
+        }
+
+        /* 2. HEADER & NAVIGATION */
+        header {
+            background-color: var(--color-primary-green);
+            color: var(--color-text-light);
+            padding: 15px 0;
+        }
+
+        nav {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        nav a {
+            color: var(--color-text-light);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0 15px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #ffd700;
+        }
+
+        /* 3. SECTION STYLES */
+        section {
+            background-color: var(--color-background-white);
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 4. TEAM SECTION (Team Members & Quote) */
+        blockquote {
+            font-style: italic;
+            margin: 30px 0;
+            padding: 20px;
+            border-left: 5px solid var(--color-primary-green);
+            background-color: var(--color-secondary-light);
+            color: #555;
+            border-radius: 4px;
+        }
+
+        blockquote cite {
+            display: block;
+            text-align: right;
+            margin-top: 10px;
+            font-style: normal;
+            font-weight: bold;
+            color: var(--color-primary-green);
+        }
+
+        .team-member-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .team-member {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-member h3 {
+            color: var(--color-primary-green);
+            margin-bottom: 5px;
+            border-left: none;
+        }
+
+        /* 5. FOOTER */
+        footer {
+            background-color: var(--color-text-dark);
+            color: var(--color-text-light);
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/contact">Contact</a> 
+        </nav>
+    </header>
+
+    <main>
+        <h1>Cultivating the Future of Agriculture 🌱</h1>
+
+        <section id="mission">
+            <h2>Our Mission</h2>
+            <p>To **empower every farmer**, regardless of field size, with the intelligent insights needed to achieve **unprecedented yields and sustainable farming practices**.</p>
+            <p>The Problem We Solve: Traditional farming relies on guesswork. We are closing the knowledge gap by translating complex satellite, soil, and environmental data into **simple, actionable advice**.</p>
+            <p>Our Vision: A world where every seed planted is optimized for success, ensuring food security and planetary health.</p>
+        </section>
+
+        <section id="team">
+            <h2>The People Behind the Platform</h2>
+            <blockquote>
+                "We don't just process data; we translate it into wisdom that respects generations of farming knowledge."
+                <cite>– [Shashank /Lokesh], CEO</cite>
+            </blockquote>
+
+            <div class="team-member-container">
+                <div class="team-member">
+                    <h3>Dr. Santhosh</h3>
+                    <p><strong>Chief Agronomist:</strong> 20+ years of experience in sustainable crop management.</p>
+                </div>
+
+                <div class="team-member">
+                    <h3>Sanketh</h3>
+                    <p><strong>Head of AI:</strong> Specializing in predictive modeling and machine learning for environmental data analysis.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 AgriTech</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Crop Recommendation System Auth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better aesthetics */
+        body {
+            font-family: 'Inter', sans-serif;
+    /* Remove background-color: #f0fdf4; or similar light background color if it's still there */
+    
+    /* Corrected Relative Path: Assuming the image is in the same folder as the HTML file */
+    background-image: url('templates/forming.jpg'); 
+
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+        }
+
+        /* Container for content, sits between header and footer */
+        #main-content-area {
+            flex-grow: 1; /* Allows content area to fill vertical space */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center content vertically */
+            padding-top: 64px; /* Space for the fixed header */
+            padding-bottom: 64px; /* Space for the footer */
+        }
+        
+        /* The main application card (used for forms) */
+        .card {
+            max-width: 480px;
+            width: 95%;
+            margin: 50px auto;
+            background: white;
+            padding: 32px;
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 10px 20px rgba(46, 129, 68, 0.2);
+            z-index: 10; /* Ensure card is above background */
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            border-color: #34d399; /* Green focus ring */
+            box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.5);
+            outline: none;
+        }
+        .btn {
+            padding: 12px 20px;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        .btn-primary {
+            background-color: #10b981; /* Emerald green */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #059669;
+        }
+        .btn-secondary {
+            background-color: #e5e7eb; /* Light gray */
+            color: #374151;
+        }
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+        }
+        
+        /* New: Styling for the transparent overlay and about section */
+        #auth-overlay {
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white overlay */
+            width: 100%;
+            min-height: calc(100vh - 128px); /* Adjust height to fit between header and footer */
+            position: absolute;
+            top: 64px;
+            left: 0;
+            z-index: 5;
+            padding: 20px;
+            /* Flex layout to center the content within the overlay */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #about-farming {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center; /* Center content */
+        }
+        
+        /* Mobile adjustments */
+        @media (max-width: 640px) {
+            .card {
+                margin: 20px 10px;
+                padding: 24px;
+            }
+            #auth-overlay {
+                padding: 10px;
+                min-height: calc(100vh - 100px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="fixed top-0 left-0 w-full bg-green-800 text-white shadow-xl z-50">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="text-2xl font-bold tracking-tight">CropRecommender</div>
+        <div class="space-x-4">
+            <a href="#" onclick="showPage('register')" class="hover:text-green-300 transition duration-150 ease-in-out">Register</a>
+            <a href="#" onclick="showPage('farmer_login')" class="hover:text-green-300 transition duration-150 ease-in-out">Login</a>
+            <a href="#" onclick="showPage('admin_login')" class="hover:text-green-300 transition duration-150 ease-in-out">Admin</a>
+        </div>
+    </nav>
+</header>
+
+<div id="main-content-area" class="relative">
+    
+    <div id="auth-overlay" class="hidden">
+        </div>
+
+    <div id="app-container" class="card hidden">
+        <div id="content-view"></div>
+    </div>
+</div>
+
+<footer class="bg-green-900 text-gray-300 py-6 mt-auto w-full z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-center text-sm">
+            <p>&copy; 2025 Crop Recommendation System. All rights reserved.</p>
+            
+            <div class="flex space-x-6 mt-3 md:mt-0">
+                <a href="/about">About Us</a>
+                <a href="/contact" class="hover:text-white transition duration-150 ease-in-out">Contact</a>
+                
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    "use strict";
+
+    // Map crop labels to actual public image URLs for visual output
+    const CROP_IMAGES = {
+        // High-quality, real crop images for a better visual experience
+        'rice': 'https://placehold.co/400x250/008000/ffffff?text=Recommended+Crop%3A+RICE',
+        'maize': 'https://placehold.co/400x250/f97316/ffffff?text=Recommended+Crop%3A+MAIZE',
+        'jute': 'https://placehold.co/400x250/22c55e/ffffff?text=Recommended+Crop%3A+JUTE',
+        'cotton': 'https://placehold.co/400x250/a8a29e/ffffff?text=Recommended+Crop%3A+COTTON',
+        'coffee': 'https://placehold.co/400x250/7c2d12/ffffff?text=Recommended+Crop%3A+COFFEE',
+        'lentil': 'https://placehold.co/400x250/6d28d9/ffffff?text=Recommended+Crop%3A+LENTIL',
+        'wheat': 'https://placehold.co/400x250/d97706/ffffff?text=Recommended+Crop%3A+WHEAT',
+        'mungbean': 'https://placehold.co/400x250/16a34a/ffffff?text=Recommended+Crop%3A+MUNGBEAN',
+        'blackgram': 'https://placehold.co/400x250/1e293b/ffffff?text=Recommended+Crop%3A+BLACKGRAM',
+        'kidneybeans': 'https://placehold.co/400x250/dc2626/ffffff?text=Recommended+Crop%3A+KIDNEYBEANS',
+        'pigeonpeas': 'https://placehold.co/400x250/065f46/ffffff?text=Recommended+Crop%3A+PIGEONPEAS',
+        'watermelon': 'https://placehold.co/400x250/b91c1c/ffffff?text=Recommended+Crop%3A+WATERMELON',
+        'apple': 'https://placehold.co/400x250/ef4444/ffffff?text=Recommended+Crop%3A+APPLE',
+        'papaya':      'https://placehold.co/400x250/fbbf24/000000?text=Recommended+Crop%3A+PAPAYA',
+        'muskmelon':   'https://placehold.co/400x250/f59e0b/000000?text=Recommended+Crop%3A+MUSKMELON',
+        'mango':       'https://placehold.co/400x250/facc15/000000?text=Recommended+Crop%3A+MANGO',
+        'banana':      'https://placehold.co/400x250/a3e635/000000?text=Recommended+Crop%3A+BANANA',
+        'pomegranate': 'https://placehold.co/400x250/be123c/ffffff?text=Recommended+Crop%3A+POMEGRANATE',
+        'mothbeans':   'https://placehold.co/400x250/22c55e/ffffff?text=Recommended+Crop%3A+MOTHBEANS',
+        'chickpea':    'https://placehold.co/400x250/f97316/ffffff?text=Recommended+Crop%3A+CHICKPEA',
+        'orange': 'https://placehold.co/400x250/f97316/ffffff?text=Recommended+Crop%3A+ORANGE',
+        'grapes': 'https://placehold.co/400x250/6d28d9/ffffff?text=Recommended+Crop%3A+GRAPES',
+        'Error': 'https://placehold.co/400x250/dc2626/ffffff?text=Prediction+Error' // Keep generic error placeholder
+    };
+
+    // Define a single global object to manage application state and constants.
+    const AppManager = {
+       
+        contentDiv: document.getElementById('content-view'),
+        appContainer: document.getElementById('app-container'),
+        authOverlay: document.getElementById('auth-overlay'),
+        currentPage: 'select_auth', // Current view
+        registeredUser: null, // Stores the successfully registered user credentials: { email, password }
+        loginMessage: '',
+        recommendationResult: null, 
+        accuracy: null,
+        overlayContentDiv: document.getElementById('auth-overlay'), 
+
+        // Hardcoded Admin Credentials (Still stored here, but NOT displayed in the UI)
+        ADMIN_EMAIL: 'admin@crop.com',
+        ADMIN_PASSWORD: 'admin123',
+    };
+
+    // Helper to change view and re-render
+    function showPage(pageName, message = '') {
+        AppManager.currentPage = pageName;
+        AppManager.loginMessage = message;
+        // Clear recommendation result when navigating away from the form or result
+        if (pageName !== 'crop_form' && pageName !== 'result_page') {
+            AppManager.recommendationResult = null;
+        }
+        render();
+    }
+
+    // --- Authentication Handlers (MOCKED) ---
+
+    async function handleRegister(e) {
+    e.preventDefault();
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
+
+    try {
+        const response = await fetch('/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            // ✅ Save current logged farmer locally (for prediction, etc.)
+            AppManager.registeredUser = { email, password };
+            localStorage.setItem('registeredUser', JSON.stringify(AppManager.registeredUser));
+
+            showPage(
+                'farmer_login',
+                `✅ ${result.message} Please login with ${email}.`
+            );
+        } else {
+            AppManager.loginMessage = result.message || '❌ Registration failed.';
+            render();
+        }
+    } catch (err) {
+        console.error('Register error:', err);
+        AppManager.loginMessage = '❌ Cannot reach backend. Is Flask running?';
+        render();
+    }
+}
+
+    async function handleFarmerLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('farmer-email').value;
+    const password = document.getElementById('farmer-password').value;
+
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            // ✅ Store logged-in farmer in memory + localStorage
+            AppManager.registeredUser = { email, password };
+            localStorage.setItem('registeredUser', JSON.stringify(AppManager.registeredUser));
+
+            showPage('crop_form', `👋 Welcome, Farmer ${email}!`);
+        } else {
+            showPage(
+                'farmer_login',
+                result.message || '❌ Invalid email or password.'
+            );
+        }
+    } catch (err) {
+        console.error('Login error:', err);
+        showPage(
+            'farmer_login',
+            '❌ Cannot reach backend. Please check if Flask is running.'
+        );
+    }
+}
+
+
+    async function handleAdminLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('admin-email').value;
+    const password = document.getElementById('admin-password').value;
+
+    if (email === AppManager.ADMIN_EMAIL && password === AppManager.ADMIN_PASSWORD) {
+        try {
+            // ✅ Get real data from Flask
+            const response = await fetch('/admin_data');
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                AppManager.adminData = result;   // { farmers: [...], recommendations: [...] }
+                showPage('admin_dashboard', '👑 Welcome, Admin!');
+            } else {
+                showPage(
+                    'admin_login',
+                    result.message || '⚠️ Failed to load admin data from server.'
+                );
+            }
+        } catch (err) {
+            console.error('Admin data error:', err);
+            showPage(
+                'admin_login',
+                '❌ Server not responding. Please make sure Flask backend is running.'
+            );
+        }
+    } else {
+        showPage('admin_login', '❌ Invalid admin credentials.');
+    }
+}
+
+
+    function logout() {
+       // Do not remove saved user → Only remove login session
+        AppManager.loginMessage = '';
+    // Clear user state
+        AppManager.adminData = null; // Clear admin data
+        showPage('select_auth', '🚪 You have been logged out.');
+    }
+
+    // --- Crop Prediction Handler (MOCKED) ---
+    async function handleCropPrediction(e) {
+    e.preventDefault();
+
+    const email = AppManager?.registeredUser?.email;
+    if (!email) {
+        showPage('farmer_login', '⚠️ Please login first.');
+        return;
+    }
+
+    const formData = new FormData(e.target);
+    const bodyData = Object.fromEntries(formData.entries());
+    bodyData.farmer_email = email;
+
+    AppManager.recommendationResult = {status: "loading"};
+    showPage('result_page');
+
+    try {
+        const response = await fetch('/crop_recommendation', {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(bodyData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            AppManager.recommendationResult = {
+                status: 'success',
+                crop: result.recommended_crop,
+                message: result.message
+            };
+            AppManager.accuracy = result.model_accuracy;
+        } else {
+            AppManager.recommendationResult = {
+                status: 'error',
+                message: result.message
+            };
+        }
+
+    } catch (err) {
+        AppManager.recommendationResult = {
+            status: 'error',
+            message: "Server not responding. Please check Flask backend."
+        };
+    }
+
+    render();
+}
+
+
+
+    // --- View Rendering Functions ---
+
+    function renderAuthSelection() {
+        // This function now renders the static content directly into the overlay
+        return `
+            <div id="about-farming" class="text-gray-700">
+                <h2 class="text-4xl font-extrabold text-center text-green-800 mb-6">Precision Farming Recommender</h2>
+
+                ${AppManager.loginMessage ? `<p class="bg-green-100 text-green-700 p-3 rounded-lg mb-6 text-base font-medium">${AppManager.loginMessage}</p>` : ''}
+
+                <h3 class="text-3xl font-bold text-green-700 mb-4 border-b-2 pb-2 border-green-300">Sustainable Agriculture: Guiding Your Harvest</h3>
+                <p class="mb-4 text-lg">Our Crop Recommendation System leverages machine learning to analyze crucial environmental factors—Nitrogen, Phosphorus, Potassium (NPK) content, temperature, humidity, pH, and rainfall—to determine the optimal crop for your specific land conditions. This data-driven approach minimizes waste, maximizes yield, and promotes sustainable, profitable farming practices.</p>
+                <p class="italic text-green-600 font-medium mb-6">Empower your agricultural decisions with precision science. Use the navigation links above to **Register** or **Login** to begin your recommendation.</p>
+                
+                <div class="grid grid-cols-3 gap-4 mt-6 text-center">
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <p class="text-2xl font-bold text-green-700">Accuracy Rate</p>
+                        <p class="text-xl">90+</p>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <p class="text-2xl font-bold text-green-700">Crops Supported</p>
+                        <p class="text-xl">All</p>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <p class="text-2xl font-bold text-green-700">Data Coverage</p>
+                        <p class="text-xl">Global</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderRegisterForm() {
+        return `
+            <h2 class="text-3xl font-bold text-center text-green-700 mb-6">Register Farmer Account</h2>
+            ${AppManager.loginMessage ? `<p class="bg-red-100 text-red-700 p-3 rounded-lg mb-4 text-sm">${AppManager.loginMessage}</p>` : ''}
+            <form onsubmit="handleRegister(event)">
+                <label for="register-email" class="text-sm font-semibold text-gray-700">Email</label>
+                <input type="email" id="register-email" placeholder="farmer@example.com" class="form-input" required>
+
+                <label for="register-password" class="text-sm font-semibold text-gray-700">Password</label>
+                <input type="password" id="register-password" placeholder="••••••••" class="form-input" required>
+
+                <button type="submit" class="btn btn-primary w-full mt-4">Register and Proceed to Login</button>
+            </form>
+            <button onclick="showPage('select_auth')" class="btn btn-secondary w-full mt-4">← Back to Home</button>
+        `;
+    }
+
+    function renderLoginForm(role) {
+        const isFarmer = role === 'farmer';
+        const title = isFarmer ? 'Farmer Login' : 'Admin Login';
+        const handler = isFarmer ? 'handleFarmerLogin(event)' : 'handleAdminLogin(event)';
+        const emailId = isFarmer ? 'farmer-email' : 'admin-email';
+        const passwordId = isFarmer ? 'farmer-password' : 'admin-password';
+
+        // NOTE: The admin credentials are removed from the display here, as requested.
+        const adminNote = isFarmer ? '' : `<p class="text-sm text-center text-gray-500 mb-4">Use your designated Admin Credentials.</p>`;
+        const farmerNote = isFarmer && !AppManager.registeredUser ? `<p class="text-sm text-center text-red-500 mb-4 font-medium">Please register first to log in.</p>` : ``;
+
+        return `
+            <h2 class="text-3xl font-bold text-center text-green-700 mb-6">${title}</h2>
+            ${adminNote}
+            ${farmerNote}
+            ${AppManager.loginMessage ? `<p class="bg-red-100 text-red-700 p-3 rounded-lg mb-4 text-sm">${AppManager.loginMessage}</p>` : ''}
+            <form onsubmit="${handler}">
+                <label for="${emailId}" class="text-sm font-semibold text-gray-700">Email</label>
+                <input type="email" id="${emailId}" placeholder="${isFarmer ? 'registered@email.com' : 'admin@crop.com'}" class="form-input" required>
+
+                <label for="${passwordId}" class="text-sm font-semibold text-gray-700">Password</label>
+                <input type="password" id="${passwordId}" placeholder="••••••••" class="form-input" required>
+
+                <button type="submit" class="btn btn-primary w-full mt-4">Login</button>
+            </form>
+            <button onclick="showPage('select_auth')" class="btn btn-secondary w-full mt-4">← Back to Home</button>
+        `;
+    }
+
+    function renderCropForm() {
+        return `
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-green-700">Crop Recommendation Inputs</h1>
+                <button onclick="logout()" class="btn-secondary px-4 py-2 text-sm">Logout</button>
+            </div>
+
+            ${AppManager.loginMessage ? `<p class="bg-green-100 text-green-700 p-3 rounded-lg mb-4 text-sm font-medium">${AppManager.loginMessage}</p>` : ''}
+
+            <form onsubmit="handleCropPrediction(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="N" class="text-sm font-semibold text-gray-700">Nitrogen (N)</label>
+                        <input type="number" step="0.01" name="N" placeholder="e.g., 90" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="P" class="text-sm font-semibold text-gray-700">Phosphorus (P)</label>
+                        <input type="number" step="0.01" name="P" placeholder="e.g., 42" class="form-input" required>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="K" class="text-sm font-semibold text-gray-700">Potassium (K)</label>
+                        <input type="number" step="0.01" name="K" placeholder="e.g., 43" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="Temperature" class="text-sm font-semibold text-gray-700">Temperature (°C)</label>
+                        <input type="number" step="0.01" name="Temperature" placeholder="e.g., 20.88" class="form-input" required>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="Humidity" class="text-sm font-semibold text-gray-700">Humidity (%)</label>
+                        <input type="number" step="0.01" name="Humidity" placeholder="e.g., 82.00" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="PH" class="text-sm font-semibold text-gray-700">pH Value</label>
+                        <input type="number" step="0.01" name="PH" placeholder="e.g., 6.50" class="form-input" required>
+                    </div>
+                </div>
+                <div>
+                    <label for="Rainfall" class="text-sm font-semibold text-gray-700">Rainfall (mm)</label>
+                    <input type="number" step="0.01" name="Rainfall" placeholder="e.g., 202.93" class="form-input" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full mt-6">Get Crop Recommendation</button>
+            </form>
+        `;
+    }
+
+    function renderResultPage() {
+        const result = AppManager.recommendationResult;
+        let bgColor, title, icon, cropImageHtml;
+
+        if (!result || result.status === 'loading') {
+            bgColor = 'bg-yellow-100';
+            title = 'Calculating...';
+            icon = '⏳';
+            cropImageHtml = '<img src="https://placehold.co/400x250/fff000/000000?text=Loading..." alt="Loading" class="rounded-lg w-full h-auto">';
+        } else if (result.status === 'success') {
+            const cropName = result.crop.toLowerCase();
+            const imageUrl = CROP_IMAGES[cropName] || CROP_IMAGES['Error'];
+            
+            bgColor = 'bg-green-100';
+            title = 'Optimal Crop Recommended!';
+            icon = '✅';
+            cropImageHtml = `<img src="${imageUrl}" alt="${result.crop}" class="rounded-lg w-full h-auto border-4 border-green-400 shadow-xl object-cover aspect-video" onerror="this.onerror=null;this.src='${CROP_IMAGES['Error']}';">`;
+        } else if (result.status === 'error') {
+            bgColor = 'bg-red-100';
+            title = 'Prediction Failed';
+            icon = '❌';
+            cropImageHtml = `<p class="text-red-700 font-medium">${result.message}</p>`;
+        }
+
+        return `
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-green-700">Prediction Result</h1>
+                <button onclick="logout()" class="btn-secondary px-4 py-2 text-sm">Logout</button>
+            </div>
+
+            <div class="p-6 rounded-xl shadow-2xl ${bgColor} text-center">
+                <p class="text-5xl mb-4">${icon}</p>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">${title}</h2>
+                
+                ${cropImageHtml}
+
+                ${result && result.status === 'success' ? `
+                    <div class="mt-6">
+                        <p class="text-lg text-gray-600 font-medium mb-1">Based on your input parameters, the recommended crop is:</p>
+                        <p class="text-5xl font-extrabold text-green-900 uppercase tracking-wider">${result.crop}</p>
+                    </div>
+                ` : ''}
+                
+                ${result && result.status === 'error' ? `<p class="text-md text-red-600 mt-4">${result.message}</p>` : ''}
+            </div>
+            
+
+
+            <button onclick="showPage('crop_form', 'Enter new parameters for a recommendation.')" class="btn btn-secondary w-full mt-8">
+                ← Enter New Parameters
+            </button>
+           
+        `;
+    }
+    
+    function renderAdminDashboard() {
+    const data = AppManager.adminData || { farmers: [], recommendations: [] };
+
+    // Farmers table
+    const farmersHTML = data.farmers
+        .map(
+            (f) => `
+        <tr>
+            <td class="border px-4 py-2 text-sm">${f.id}</td>
+            <td class="border px-4 py-2 text-sm">${f.email}</td>
+        </tr>`
+        )
+        .join('');
+
+    // Recommendation table: only farmer + crop (unwanted data removed)
+    const recsHTML = data.recommendations
+        .map(
+            (r) => `
+        <tr>
+            <td class="border px-4 py-2 text-sm">${r.id}</td>
+            <td class="border px-4 py-2 text-sm">${r.farmer_email}</td>
+            <td class="border px-4 py-2 text-sm">${r.crop_name}</td>
+        </tr>`
+        )
+        .join('');
+
+    return `
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-green-700">Admin Dashboard</h1>
+            <button onclick="logout()" class="btn-secondary px-4 py-2 text-sm">Logout</button>
+        </div>
+
+        ${AppManager.loginMessage ? `
+            <p class="bg-green-100 text-green-700 p-3 rounded-lg mb-4 text-sm font-medium">
+                ${AppManager.loginMessage}
+            </p>` : ''}
+
+        <!-- Registered Farmers -->
+        <div class="bg-white p-4 rounded-lg shadow-lg mb-8 max-h-64 overflow-y-auto">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">
+                Registered Farmers (${data.farmers.length})
+            </h2>
+            <table class="table-auto w-full border-collapse border border-gray-300 text-sm">
+                <thead class="bg-green-100 sticky top-0">
+                    <tr>
+                        <th class="border px-4 py-2">ID</th>
+                        <th class="border px-4 py-2">Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${farmersHTML || `
+                        <tr>
+                            <td colspan="2" class="p-4 text-center text-gray-500">
+                                No farmers registered yet.
+                            </td>
+                        </tr>`}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Crop Recommendations -->
+        <div class="bg-white p-4 rounded-lg shadow-lg max-h-80 overflow-y-auto">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">
+                Crop Recommendations (${data.recommendations.length})
+            </h2>
+            <table class="table-auto w-full border-collapse border border-gray-300 text-sm">
+                <thead class="bg-green-100 sticky top-0">
+                    <tr>
+                        <th class="border px-4 py-2">Rec ID</th>
+                        <th class="border px-4 py-2">Farmer Email</th>
+                        <th class="border px-4 py-2">Recommended Crop</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${recsHTML || `
+                        <tr>
+                            <td colspan="3" class="p-4 text-center text-gray-500">
+                                No crop recommendations yet.
+                            </td>
+                        </tr>`}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+
+
+    // Main render function
+    function render() {
+        let htmlContent = '';
+        
+        // Control visibility: Show overlay on the home page, hide it and show the card for all other pages.
+        const isAuthSelection = AppManager.currentPage === 'select_auth';
+        AppManager.authOverlay.classList.toggle('hidden', !isAuthSelection);
+        AppManager.appContainer.classList.toggle('hidden', isAuthSelection);
+        
+
+        switch (AppManager.currentPage) {
+            case 'select_auth':
+                htmlContent = renderAuthSelection();
+                AppManager.overlayContentDiv.innerHTML = htmlContent;
+                return; // Exit render() as content is in the overlay
+            case 'register':
+                htmlContent = renderRegisterForm();
+                break;
+            case 'farmer_login':
+                htmlContent = renderLoginForm('farmer');
+                break;
+            case 'admin_login':
+                htmlContent = renderLoginForm('admin');
+                break;
+            case 'admin_dashboard':
+                htmlContent = renderAdminDashboard();
+                break;
+            case 'crop_form':
+                htmlContent = renderCropForm();
+                break;
+            case 'result_page':
+                htmlContent = renderResultPage();
+                break;
+            default:
+                htmlContent = renderAuthSelection();
+                AppManager.overlayContentDiv.innerHTML = htmlContent;
+                return;
+        }
+        
+        // Render all other content (forms/results) into the card container
+        AppManager.contentDiv.innerHTML = htmlContent;
+    }
+
+    // Initial load
+    window.onload = () => {
+        // Set a default mock registered user for testing if needed, or keep null to force registration first
+        // AppManager.registeredUser = { email: 'test@user.com', password: 'password123' }; 
+        render(); 
+    };
+</script>
+
+</body>
+</html>
